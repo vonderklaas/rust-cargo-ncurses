@@ -6,3 +6,7 @@ transform hash file ->
 make subfolders ->
 store encrypted data ->
 do file versioning
+
+<br />
+
+timestamp:
