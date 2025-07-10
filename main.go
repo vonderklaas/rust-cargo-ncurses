@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/vonderklaas/demo/p2p"
@@ -13,7 +14,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	select {}
+	fmt.Println("Application is running...")
 
-	// fmt.Println("We Gucci!")
+	select {}
 }
