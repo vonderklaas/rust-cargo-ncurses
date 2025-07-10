@@ -1,4 +1,4 @@
-module github.com/vonderklaas/demo
+module github.com/vonderklaas/distributed-file-storage
 
 go 1.24.5
 
