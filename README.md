@@ -1,17 +1,8 @@
-### Quick Start
+Flow:
 
-Run application
-
-```console
-cargo run TODO
-```
-
-### Controls
-
-| Keys             | Description                     |
-| ---------------- | ------------------------------- |
-| <kbd>q</kbd>     | Quit                            |
-| <kbd>w</kbd>     | Move Up                         |
-| <kbd>s</kbd>     | Move Down                       |
-| <kbd>Tab</kbd>   | Switch tabs (TODO and DONE)     |
-| <kbd>Enter</kbd> | Action (on highlighted element) |
+Send file ->
+hash file ->
+transform hash file ->
+make subfolders ->
+store encrypted data ->
+do file versioning
