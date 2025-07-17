@@ -45,11 +45,15 @@ func (app *application) mount() http.Handler {
 
 		r.Route("/posts", func(r chi.Router) {
 			r.Post("/", app.createPostHandler)
+
 			r.Route("/{postID}", func(r chi.Router) {
+				// Middleware (only available inside this block)
+				r.Use(app.postsContextMiddleware)
+
+				// These guys have access to middleware
 				r.Get("/", app.getPostHandler)
-				// r.Put("/", func(w http.ResponseWriter, r *http.Request) {})
-				// r.Patch("/", func(w http.ResponseWriter, r *http.Request) {})
-				// r.Delete("/", func(w http.ResponseWriter, r *http.Request) {})
+				r.Delete("/", app.deletePostHandler)
+				r.Patch("/", app.updatePostHandler)
 			})
 		})
 	})
@@ -67,7 +71,7 @@ func (app *application) run(mux http.Handler) error {
 		IdleTimeout:  time.Minute,
 	}
 
-	log.Printf("server has started at %s", app.config.addr)
+	log.Printf("go server is listening on port %s", app.config.addr)
 
 	return srv.ListenAndServe()
 }
