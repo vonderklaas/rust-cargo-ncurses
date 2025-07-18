@@ -11,3 +11,7 @@ migrate-up:
 .PHONY: migrate-down
 migrate-down:
 	@migrate create -seq -ext sql -dir $(MIGRATIONS_PATH) $(filter-out $@, $(MAKECMDGOALS))
+
+.PHONY: seed
+seed:
+	@go run cmd/migrate/seed/main.go
