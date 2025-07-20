@@ -37,3 +37,6 @@ Posts CRUD
 - Database Seeding
 
 The User Feed
+
+- Creating User Profile
+- Get User By ID
