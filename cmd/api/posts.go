@@ -140,7 +140,7 @@ func (app *application) updatePostHandler(w http.ResponseWriter, r *http.Request
 
 }
 
-// Middleware: Fetch post and put in context
+// Middleware: Fetch post, parse it and inject it into Context
 func (app *application) postsContextMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
@@ -166,13 +166,14 @@ func (app *application) postsContextMiddleware(next http.Handler) http.Handler {
 			return
 		}
 
-		// Create new context (never mutate, always create new one from scratch)
+		// Inject into Context
 		ctx = context.WithValue(ctx, postCtx, post)
 		next.ServeHTTP(w, r.WithContext(ctx))
 
 	})
 }
 
+// Utility: Get post from the Context
 func getPostFromCtx(r *http.Request) *store.Post {
 	post, _ := r.Context().Value(postCtx).(*store.Post)
 	return post

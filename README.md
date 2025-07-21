@@ -1,3 +1,12 @@
+### Folder Structure
+
+/bin -> binary executables
+/cmd/api -> HTTP / API layer
+/docs - ?
+/internal/db
+/internal/env
+/internal/store -> storage layer
+
 ### Order of Development
 
 Project Architecture:
@@ -40,3 +49,4 @@ The User Feed
 
 - Creating User Profile
 - Get User By ID
+- Add Followers Table
