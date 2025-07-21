@@ -2,7 +2,7 @@
 
 `/bin`: compiled binaries (e.g., `air`, build artifacts) <br />
 `/cmd/api`: main HTTP API server (entrypoint and route handlers) <br />
-`/cmd/migrat`: Database migration SQL files and seed logic <br />
+`/cmd/migrate`: Database migration SQL files and seed logic <br />
 `/docs`: project documentation (designs, API specs, notes) <br />
 `/internal/db`: db connection utilities and seeding helpers <br />
 `/internal/env`: environment variable configuration and helpers <br />
