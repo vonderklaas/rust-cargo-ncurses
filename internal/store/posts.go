@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"fmt"
 
 	"github.com/lib/pq"
 )
@@ -32,14 +33,14 @@ type PostStore struct {
 	db *sql.DB
 }
 
-func (s *PostStore) GetUserFeed(ctx context.Context, userID int64) ([]PostWithMetadata, error) {
+func (s *PostStore) GetUserFeed(ctx context.Context, userID int64, fq PaginatedFeedQuery) ([]PostWithMetadata, error) {
 	/*
 		Retrieve all posts with their full details, the author's username, and the number of comments each post has.
 		Include posts even if they have no comments (with comments_count = 0).
 		Only include posts authored by users that the current user follows or by the current user themself.
 		Show the most recent posts first.
 	*/
-	query := `
+	query := fmt.Sprintf(`
 		SELECT
 			p.id, p.user_id, p.title, p.content, p.created_at, p.version, p.tags,
 			u.username,
@@ -50,13 +51,14 @@ func (s *PostStore) GetUserFeed(ctx context.Context, userID int64) ([]PostWithMe
 		LEFT JOIN followers f ON f.follower_id = $1 AND f.user_id = p.user_id
 		WHERE p.user_id = $1 OR f.follower_id IS NOT NULL
 		GROUP BY p.id, u.username
-		ORDER BY p.created_at DESC;
-	`
+		ORDER BY p.created_at %s
+		LIMIT $2 OFFSET $3
+	`, fq.Sort) // safe because fq.Sort is validated to be "asc" or "desc"
 
 	ctx, cancel := context.WithTimeout(ctx, QueryTimeoutDuration)
 	defer cancel()
 
-	rows, err := s.db.QueryContext(ctx, query, userID)
+	rows, err := s.db.QueryContext(ctx, query, userID, fq.Limit, fq.Offset)
 	if err != nil {
 		return nil, err
 	}
