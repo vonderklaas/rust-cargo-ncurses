@@ -1,26 +1,26 @@
 ### Folder Structure
 
-/bin -> binary executables
-/cmd/api -> HTTP / API layer
-/docs - ?
-/internal/db
-/internal/env
-/internal/store -> storage layer
+`/bin`:binary executables
+`/cmd/api`: HTTP layer
+`/docs`:
+`/internal/db`:
+`/internal/env`:
+`/internal/store`: storage layer
 
 ### Order of Development
 
-Project Architecture:
+1. Project Architecture:
 
 - Set Up Development Environment
 - Clean Layered Architecture
 
-Scaffolding API Server
+2. Scaffolding API Server:
 
 - Set Up HTTP Server and API: net/http, go-chi
 - Add Hot Reloading: air
 - Environment Variables: direnv
 
-Databases:
+3. Databases:
 
 - Repository Pattern
 - Running PostgreSQL container on Docker
@@ -28,7 +28,7 @@ Databases:
 - Persisting Data
 - SQL Migrations
 
-Posts CRUD
+4. Posts CRUD:
 
 - Marshalling JSON
 - Creating a Post
@@ -45,8 +45,14 @@ Posts CRUD
 - Managing SQL Query Timeouts
 - Database Seeding
 
-The User Feed
+5. The User Feed:
 
 - Creating User Profile
 - Get User By ID
 - Add Followers Table
+- SQL Indexes
+- User Feed Algorithm
+
+6. Filtering, Sorting, and Pagination:
+
+- WIP

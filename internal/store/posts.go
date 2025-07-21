@@ -19,10 +19,74 @@ type Post struct {
 	UpdatedAt string    `json:"updated_at"`
 	Version   int       `json:"version"`
 	Comments  []Comment `json:"comments"`
+	User      User      `json:"user"`
+}
+
+// Composition (for the feed)
+type PostWithMetadata struct {
+	Post
+	CommentCount int `json:"comments_count"`
 }
 
 type PostStore struct {
 	db *sql.DB
+}
+
+func (s *PostStore) GetUserFeed(ctx context.Context, userID int64) ([]PostWithMetadata, error) {
+	/*
+		Retrieve all posts with their full details, the author's username, and the number of comments each post has.
+		Include posts even if they have no comments (with comments_count = 0).
+		Only include posts authored by users that the current user follows or by the current user themself.
+		Show the most recent posts first.
+	*/
+	query := `
+		SELECT
+			p.id, p.user_id, p.title, p.content, p.created_at, p.version, p.tags,
+			u.username,
+			COUNT(c.id) AS comments_count
+		FROM posts p
+		LEFT JOIN comments c ON c.post_id = p.id
+		LEFT JOIN users u ON p.user_id = u.id
+		LEFT JOIN followers f ON f.follower_id = $1 AND f.user_id = p.user_id
+		WHERE p.user_id = $1 OR f.follower_id IS NOT NULL
+		GROUP BY p.id, u.username
+		ORDER BY p.created_at DESC;
+	`
+
+	ctx, cancel := context.WithTimeout(ctx, QueryTimeoutDuration)
+	defer cancel()
+
+	rows, err := s.db.QueryContext(ctx, query, userID)
+	if err != nil {
+		return nil, err
+	}
+
+	defer rows.Close()
+
+	var feed []PostWithMetadata
+	for rows.Next() {
+		var post PostWithMetadata
+		err := rows.Scan(
+			&post.ID,
+			&post.UserID,
+			&post.Title,
+			&post.Content,
+			&post.CreatedAt,
+			&post.Version,
+			pq.Array(&post.Tags),
+			&post.User.Username,
+			&post.CommentCount,
+		)
+
+		if err != nil {
+			return nil, err
+		}
+
+		feed = append(feed, post)
+	}
+
+	return feed, nil
+
 }
 
 func (s *PostStore) Create(ctx context.Context, post *Post) error {
