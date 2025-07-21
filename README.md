@@ -1,11 +1,13 @@
 ### Folder Structure
 
-`/bin`:binary executables
-`/cmd/api`: HTTP layer
-`/docs`:
-`/internal/db`:
-`/internal/env`:
-`/internal/store`: storage layer
+`/bin` # Compiled binaries (e.g., `air`, build artifacts) <br />
+`/cmd/api` # Main HTTP API server (entrypoint and route handlers) <br />
+`/cmd/migrate` # Database migration SQL files and seed logic <br />
+`/docs` # Project documentation (designs, API specs, notes) <br />
+`/internal/db` # DB connection utilities and seeding helpers <br />
+`/internal/env` # Environment variable configuration and helpers <br />
+`/internal/store` # Storage layer: database access logic for posts, users, etc. <br />
+`/scripts` # Supporting SQL and shell scripts <br />
 
 ### Order of Development
 
