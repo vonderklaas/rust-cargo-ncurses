@@ -57,4 +57,6 @@
 
 6. Filtering, Sorting, and Pagination:
 
-- WIP
+- Pagination
+- Sorting
+- Fuzzy Search

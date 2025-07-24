@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"fmt"
 
 	"github.com/lib/pq"
 )
@@ -40,7 +39,9 @@ func (s *PostStore) GetUserFeed(ctx context.Context, userID int64, fq PaginatedF
 		Only include posts authored by users that the current user follows or by the current user themself.
 		Show the most recent posts first.
 	*/
-	query := fmt.Sprintf(`
+
+	// OR p.user_id = $1
+	query := `
 		SELECT
 			p.id, p.user_id, p.title, p.content, p.created_at, p.version, p.tags,
 			u.username,
@@ -48,17 +49,20 @@ func (s *PostStore) GetUserFeed(ctx context.Context, userID int64, fq PaginatedF
 		FROM posts p
 		LEFT JOIN comments c ON c.post_id = p.id
 		LEFT JOIN users u ON p.user_id = u.id
-		LEFT JOIN followers f ON f.follower_id = $1 AND f.user_id = p.user_id
-		WHERE p.user_id = $1 OR f.follower_id IS NOT NULL
+		LEFT JOIN followers f ON f.follower_id = p.user_id OR p.user_id = $1
+		WHERE
+			f.user_id = $1 AND
+			(p.title ILIKE '%' || $4 || '%' OR p.content ILIKE '%' || $4 || '%')
+			(p.tags @> $5 OR $5 = '{}')
 		GROUP BY p.id, u.username
-		ORDER BY p.created_at %s
+		ORDER BY p.created_at ` + fq.Sort + `
 		LIMIT $2 OFFSET $3
-	`, fq.Sort) // safe because fq.Sort is validated to be "asc" or "desc"
+	`
 
 	ctx, cancel := context.WithTimeout(ctx, QueryTimeoutDuration)
 	defer cancel()
 
-	rows, err := s.db.QueryContext(ctx, query, userID, fq.Limit, fq.Offset)
+	rows, err := s.db.QueryContext(ctx, query, userID, fq.Limit, fq.Offset, fq.Search, fq.Tags)
 	if err != nil {
 		return nil, err
 	}
