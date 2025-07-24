@@ -60,3 +60,7 @@
 - Pagination
 - Sorting
 - Fuzzy Search
+
+7. Swagger
+
+- API Docs
