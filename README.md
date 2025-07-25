@@ -64,3 +64,8 @@
 7. Swagger
 
 - API Docs
+- Documented Routes
+
+8. Logging
+
+- Adding Structured Logging
