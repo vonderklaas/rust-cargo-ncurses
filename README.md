@@ -69,3 +69,8 @@
 8. Logging
 
 - Adding Structured Logging
+
+10. User Creation
+
+- User Registration Flow
+- SQL Transactions
